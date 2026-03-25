@@ -142,7 +142,7 @@ export default async function PropertyDetailsPage({
               {property.interactions.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune interaction enregistrée.</p>
               ) : (
-                property.interactions.map((interaction) => (
+                property.interactions.map((interaction: (typeof property.interactions)[number]) => (
                   <div key={interaction.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <Link href={`/app/interactions/${interaction.id}`} className="font-medium text-ink transition hover:underline">
                       {interaction.summary}
@@ -160,7 +160,7 @@ export default async function PropertyDetailsPage({
               {property.matches.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucun match disponible pour le moment.</p>
               ) : (
-                property.matches.map((match) => (
+                property.matches.map((match: (typeof property.matches)[number]) => (
                   <div key={match.id} className="flex items-center justify-between rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div>
                       <div className="font-medium text-ink">{match.searchRequest.title}</div>
@@ -189,7 +189,7 @@ export default async function PropertyDetailsPage({
               {property.tasks.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune tâche liée.</p>
               ) : (
-                property.tasks.map((task) => (
+                property.tasks.map((task: (typeof property.tasks)[number]) => (
                   <div key={task.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{task.title}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">{task.status}</div>

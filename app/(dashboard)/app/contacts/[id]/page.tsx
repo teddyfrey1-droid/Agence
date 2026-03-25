@@ -131,7 +131,7 @@ export default async function ContactDetailsPage({ params }: { params: Promise<{
               {contact.searchRequests.length === 0 ? (
                 <p className="text-sm text-[#8a7e71]">Aucune demande liée pour le moment.</p>
               ) : (
-                contact.searchRequests.map((request) => (
+                contact.searchRequests.map((request: (typeof contact.searchRequests)[number]) => (
                   <div key={request.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <Link href={`/app/demandes/${request.id}`} className="font-medium text-ink transition hover:underline">
                       {request.title}
@@ -159,7 +159,7 @@ export default async function ContactDetailsPage({ params }: { params: Promise<{
               {contact.deals.length === 0 ? (
                 <p className="text-sm text-[#8a7e71]">Aucun dossier lié pour le moment.</p>
               ) : (
-                contact.deals.map((deal) => (
+                contact.deals.map((deal: (typeof contact.deals)[number]) => (
                   <div key={deal.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <Link href={`/app/dossiers/${deal.id}`} className="font-medium text-ink transition hover:underline">
                       {deal.title}
@@ -187,7 +187,7 @@ export default async function ContactDetailsPage({ params }: { params: Promise<{
               {contact.organizationLinks.length === 0 ? (
                 <p className="text-sm text-[#8a7e71]">Aucune société liée.</p>
               ) : (
-                contact.organizationLinks.map((link) => (
+                contact.organizationLinks.map((link: (typeof contact.organizationLinks)[number]) => (
                   <div key={link.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4 text-sm">
                     <div className="font-medium">
                       {link.organization.displayName || link.organization.legalName}
@@ -211,7 +211,7 @@ export default async function ContactDetailsPage({ params }: { params: Promise<{
               {contact.tasks.length === 0 ? (
                 <p className="text-sm text-[#8a7e71]">Aucune tâche liée.</p>
               ) : (
-                contact.tasks.map((task) => (
+                contact.tasks.map((task: (typeof contact.tasks)[number]) => (
                   <div key={task.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <Link href={`/app/taches/${task.id}`} className="font-medium text-ink transition hover:underline">
                       {task.title}
@@ -243,7 +243,7 @@ export default async function ContactDetailsPage({ params }: { params: Promise<{
               {contact.interactions.length === 0 ? (
                 <p className="text-sm text-[#8a7e71]">Aucune interaction enregistrée.</p>
               ) : (
-                contact.interactions.map((interaction) => (
+                contact.interactions.map((interaction: (typeof contact.interactions)[number]) => (
                   <div key={interaction.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{interaction.summary}</div>
                     <div className="mt-1 text-xs text-[#8a7e71]">

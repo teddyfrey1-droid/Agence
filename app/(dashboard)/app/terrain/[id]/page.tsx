@@ -137,7 +137,7 @@ export default async function TerrainDetailsPage({ params }: { params: Promise<{
               {spotting.tasks.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune tâche liée.</p>
               ) : (
-                spotting.tasks.map((task) => (
+                spotting.tasks.map((task: (typeof spotting.tasks)[number]) => (
                   <div key={task.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{task.title}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">{task.status}</div>

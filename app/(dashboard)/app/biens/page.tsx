@@ -48,7 +48,7 @@ export default async function PropertiesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {properties.map((property) => (
+            {properties.map((property: (typeof properties)[number]) => (
               <tr key={property.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/biens/${property.id}`} className="font-medium hover:underline">

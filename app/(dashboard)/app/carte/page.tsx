@@ -113,7 +113,7 @@ export default async function CartePage() {
             {latestProperties.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucun bien géolocalisé pour le moment.</p>
             ) : (
-              latestProperties.slice(0, 8).map((item) => (
+              latestProperties.slice(0, 8).map((item: (typeof latestProperties)[number]) => (
                 <div key={item.id} className="rounded-2xl border border-black/6 bg-neutral-50 px-4 py-3 text-sm">
                   <Link href={`/app/biens/${item.id}`} className="font-medium hover:underline">
                     {item.internalTitle}
@@ -132,7 +132,7 @@ export default async function CartePage() {
             {latestSpottings.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucun repérage géolocalisé pour le moment.</p>
             ) : (
-              latestSpottings.slice(0, 8).map((item) => (
+              latestSpottings.slice(0, 8).map((item: (typeof latestSpottings)[number]) => (
                 <div key={item.id} className="rounded-2xl border border-black/6 bg-neutral-50 px-4 py-3 text-sm">
                   <Link href={`/app/terrain/${item.id}`} className="font-medium hover:underline">
                     {item.addressText ?? "Adresse non renseignée"}

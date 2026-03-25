@@ -63,7 +63,7 @@ export default async function ContactsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {contacts.map((contact) => (
+            {contacts.map((contact: (typeof contacts)[number]) => (
               <tr key={contact.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/contacts/${contact.id}`} className="font-medium text-ink transition hover:underline">

@@ -96,7 +96,7 @@ export default async function PerformancePage() {
             {dealsByStage.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucun dossier pour le moment.</p>
             ) : (
-              dealsByStage.map((item) => (
+              dealsByStage.map((item: (typeof dealsByStage)[number]) => (
                 <div key={item.stage} className="flex items-center justify-between rounded-2xl border border-black/6 bg-neutral-50 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <StatusPill tone={toneForStage(item.stage)}>{item.stage}</StatusPill>
@@ -116,7 +116,7 @@ export default async function PerformancePage() {
             {requestsByStatus.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucune demande pour le moment.</p>
             ) : (
-              requestsByStatus.map((item) => (
+              requestsByStatus.map((item: (typeof requestsByStatus)[number]) => (
                 <div key={item.status} className="flex items-center justify-between rounded-2xl border border-black/6 bg-neutral-50 px-4 py-3">
                   <StatusPill>{item.status}</StatusPill>
                   <div className="text-sm font-medium">{item._count._all}</div>
@@ -135,7 +135,7 @@ export default async function PerformancePage() {
           {latestAudit.length === 0 ? (
             <p className="text-sm text-[#6b665f]">Aucune activité récente.</p>
           ) : (
-            latestAudit.map((item) => (
+            latestAudit.map((item: (typeof latestAudit)[number]) => (
               <div key={item.id} className="rounded-2xl border border-black/6 bg-neutral-50 px-4 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">

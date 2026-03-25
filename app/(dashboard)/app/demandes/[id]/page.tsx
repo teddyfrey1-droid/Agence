@@ -135,7 +135,7 @@ export default async function SearchRequestDetailsPage({
               {request.interactions.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune interaction enregistrée.</p>
               ) : (
-                request.interactions.map((interaction) => (
+                request.interactions.map((interaction: (typeof request.interactions)[number]) => (
                   <div key={interaction.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <Link href={`/app/interactions/${interaction.id}`} className="font-medium text-ink hover:underline">
                       {interaction.summary}
@@ -160,7 +160,7 @@ export default async function SearchRequestDetailsPage({
               {request.matches.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucun bien compatible pour le moment.</p>
               ) : (
-                request.matches.map((match) => (
+                request.matches.map((match: (typeof request.matches)[number]) => (
                   <div key={match.id} className="flex items-center justify-between rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div>
                       <Link href={`/app/biens/${match.property.id}`} className="font-medium text-ink hover:underline">
@@ -212,7 +212,7 @@ export default async function SearchRequestDetailsPage({
               {request.tasks.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune tâche liée.</p>
               ) : (
-                request.tasks.map((task) => (
+                request.tasks.map((task: (typeof request.tasks)[number]) => (
                   <div key={task.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{task.title}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">{task.status}</div>

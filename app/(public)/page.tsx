@@ -78,7 +78,7 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          {latestListings.length > 0 ? latestListings.map((listing) => (
+          {latestListings.length > 0 ? latestListings.map((listing: (typeof latestListings)[number]) => (
             <PublicPropertyCard
               key={listing.id}
               slug={listing.seoSlug}

@@ -62,7 +62,7 @@ export default async function SearchRequestsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {requests.map((request) => (
+            {requests.map((request: (typeof requests)[number]) => (
               <tr key={request.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/demandes/${request.id}`} className="font-medium hover:underline">

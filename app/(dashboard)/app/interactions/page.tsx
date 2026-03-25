@@ -45,7 +45,7 @@ export default async function InteractionsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {interactions.map((interaction) => (
+            {interactions.map((interaction: (typeof interactions)[number]) => (
               <tr key={interaction.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/interactions/${interaction.id}`} className="font-medium text-ink transition hover:underline">

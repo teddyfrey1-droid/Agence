@@ -70,7 +70,7 @@ export default async function TasksPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {tasks.map((task) => (
+            {tasks.map((task: (typeof tasks)[number]) => (
               <tr key={task.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/taches/${task.id}`} className="font-medium hover:underline">

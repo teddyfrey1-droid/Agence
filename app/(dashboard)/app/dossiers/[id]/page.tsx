@@ -118,7 +118,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
               {deal.interactions.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune interaction enregistrée.</p>
               ) : (
-                deal.interactions.map((interaction) => (
+                deal.interactions.map((interaction: (typeof deal.interactions)[number]) => (
                   <div key={interaction.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{interaction.summary}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">
@@ -145,7 +145,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
               {deal.tasks.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune tâche liée.</p>
               ) : (
-                deal.tasks.map((task) => (
+                deal.tasks.map((task: (typeof deal.tasks)[number]) => (
                   <div key={task.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{task.title}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">{task.status}</div>
@@ -160,7 +160,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
               {deal.visits.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune visite liée.</p>
               ) : (
-                deal.visits.map((visit) => (
+                deal.visits.map((visit: (typeof deal.visits)[number]) => (
                   <div key={visit.id} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                     <div className="font-medium text-ink">{visit.status}</div>
                     <div className="mt-1 text-sm text-[#6b665f]">

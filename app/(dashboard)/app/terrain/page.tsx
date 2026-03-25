@@ -55,7 +55,7 @@ export default async function TerrainPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-black/5 bg-white">
-            {spottings.map((spotting) => (
+            {spottings.map((spotting: (typeof spottings)[number]) => (
               <tr key={spotting.id} className="text-sm">
                 <td className="px-4 py-3">
                   <Link href={`/app/terrain/${spotting.id}`} className="font-medium hover:underline">

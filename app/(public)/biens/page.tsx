@@ -26,7 +26,7 @@ export default async function PublicPropertiesPage() {
 
       {listings.length ? (
         <div className="grid gap-6 lg:grid-cols-3">
-          {listings.map((listing) => (
+          {listings.map((listing: (typeof listings)[number]) => (
             <PublicPropertyCard
               key={listing.id}
               slug={listing.seoSlug}

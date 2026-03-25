@@ -48,7 +48,7 @@ export default async function DealsPage() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-4 2xl:grid-cols-6">
-        {stageOrder.map((stage) => (
+        {stageOrder.map((stage: (typeof stageOrder)[number]) => (
           <section key={stage} className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-sm font-semibold">{stage}</h2>
@@ -58,7 +58,7 @@ export default async function DealsPage() {
             <div className="space-y-3">
               {grouped[stage].length === 0 && <div className="rounded-xl border border-dashed border-black/10 px-3 py-4 text-xs text-neutral-400">Aucun dossier</div>}
 
-              {grouped[stage].map((deal) => (
+              {grouped[stage].map((deal: (typeof grouped[typeof stage])[number]) => (
                 <Link key={deal.id} href={`/app/dossiers/${deal.id}`} className="block rounded-xl border border-black/10 bg-neutral-50 px-3 py-3 transition hover:border-black/20 hover:bg-white">
                   <div className="font-medium leading-5">{deal.title}</div>
                   <div className="mt-2 text-xs text-neutral-500">{deal.contact?.fullName ?? "Sans contact"}</div>

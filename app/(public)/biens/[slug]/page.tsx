@@ -83,7 +83,7 @@ export default async function PublicPropertyDetailsPage({
           <section className="surface-card">
             <div className="text-[11px] uppercase tracking-[0.24em] text-[#8a7e71]">Synthèse</div>
             <div className="mt-5 grid gap-3">
-              {detailItems.map((item) => (
+              {detailItems.map((item: (typeof detailItems)[number]) => (
                 <div key={item.label} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                   <div className="text-[11px] uppercase tracking-[0.18em] text-[#8a7e71]">{item.label}</div>
                   <div className="mt-1 text-sm font-medium text-ink">{item.value}</div>
