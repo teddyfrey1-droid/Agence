@@ -1,0 +1,5 @@
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import { createSession } from "@/lib/auth";
+export async function POST(request: NextRequest) { const body = await request.json(); const email = String(body.email ?? "").trim().toLowerCase(); const password = String(body.password ?? ""); if (!email || !password) return NextResponse.json({ error: "Email et mot de passe requis" }, { status: 400 }); const user = await prisma.user.findFirst({ where: { email, status: "ACTIVE" }, include: { role: true } }); if (!user || !user.passwordHash) return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 }); const isValid = await bcrypt.compare(password, user.passwordHash); if (!isValid) return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 }); await createSession(user.id); await prisma.auditLog.create({ data: { agencyId: user.agencyId, userId: user.id, actionType: "LOGIN", entityType: "User", entityId: user.id } }); return NextResponse.json({ success: true }); }
