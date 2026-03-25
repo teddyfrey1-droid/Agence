@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EntityHeader } from "@/components/ui/entity-header";
@@ -82,7 +83,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
 
       <div className="grid gap-6 xl:grid-cols-[1.65fr_1fr]">
         <div className="space-y-6">
-          <SectionCard title="Synthèse du dossier" description="Vue d’ensemble commerciale de l’affaire.">
+          <SectionCard title="Synthèse du dossier" description="Vue d'ensemble commerciale de l'affaire.">
             <div className="grid gap-4 md:grid-cols-2">
               <DetailItem label="Priorité" value={deal.priorityLevel} />
               <DetailItem label="Valeur estimée" value={deal.estimatedValue ? `${deal.estimatedValue.toString()} €` : "—"} />
@@ -98,16 +99,28 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
 
           <SectionCard title="Objets liés" description="Ce que ce dossier relie dans le CRM.">
             <div className="space-y-3 text-sm text-[#3f3a34]">
-              <LinkedRow label="Contact" href={deal.contact ? `/app/contacts/${deal.contact.id}` : undefined} value={deal.contact ? <Link href={`/app/contacts/${deal.contact.id}`} className="hover:underline">{deal.contact.fullName}</Link> : "—"} />
-              <LinkedRow label="Bien" href={deal.property ? `/app/biens/${deal.property.id}` : undefined} value={deal.property?.internalTitle ?? "—"} />
-              <LinkedRow label="Demande" href={deal.searchRequest ? `/app/demandes/${deal.searchRequest.id}` : undefined} value={deal.searchRequest?.title ?? "—"} />
+              <LinkedRow
+                label="Contact"
+                href={deal.contact ? `/app/contacts/${deal.contact.id}` : undefined}
+                value={deal.contact ? <Link href={`/app/contacts/${deal.contact.id}`} className="hover:underline">{deal.contact.fullName}</Link> : "—"}
+              />
+              <LinkedRow
+                label="Bien"
+                href={deal.property ? `/app/biens/${deal.property.id}` : undefined}
+                value={deal.property?.internalTitle ?? "—"}
+              />
+              <LinkedRow
+                label="Demande"
+                href={deal.searchRequest ? `/app/demandes/${deal.searchRequest.id}` : undefined}
+                value={deal.searchRequest?.title ?? "—"}
+              />
               <LinkedRow label="Responsable" value={deal.assignedUser?.fullName ?? "Non assigné"} />
             </div>
           </SectionCard>
 
           <SectionCard
             title="Interactions récentes"
-            description="Derniers échanges et retours liés à l’affaire."
+            description="Derniers échanges et retours liés à l'affaire."
             action={
               <Link href={`/app/interactions/new?dealId=${deal.id}${deal.contact ? `&contactId=${deal.contact.id}` : ""}`} className="text-sm font-medium text-ink underline-offset-4 hover:underline">
                 Ajouter une interaction
@@ -129,7 +142,6 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
               )}
             </div>
           </SectionCard>
-
 
           <SectionCard title="Documents" description="Pièces liées à la négociation, au mandat ou à la transaction.">
             <div className="space-y-5">
@@ -155,7 +167,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
             </div>
           </SectionCard>
 
-          <SectionCard title="Visites" description="Historique des rendez-vous liés à l’affaire.">
+          <SectionCard title="Visites" description="Historique des rendez-vous liés à l'affaire.">
             <div className="space-y-3">
               {deal.visits.length === 0 ? (
                 <p className="text-sm text-[#6b665f]">Aucune visite liée.</p>
@@ -177,7 +189,7 @@ export default async function DealDetailsPage({ params }: { params: Promise<{ id
   );
 }
 
-function LinkedRow({ label, value, href }: { label: string; value: string; href?: string }) {
+function LinkedRow({ label, value, href }: { label: string; value: ReactNode; href?: string }) {
   return (
     <div className="flex items-start justify-between gap-4 rounded-xl border border-line bg-[#fbf8f4] px-4 py-3">
       <span className="text-[#8a7e71]">{label}</span>
