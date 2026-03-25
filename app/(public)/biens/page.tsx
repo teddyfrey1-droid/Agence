@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { prisma } from "@/lib/prisma";
 import { PublicPropertyCard } from "@/components/public/public-property-card";
 

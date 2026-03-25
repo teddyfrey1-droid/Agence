@@ -31,9 +31,9 @@ export default async function DealEditPage({
   return (
     <DealEditClientPage
       dealId={deal.id}
-      contacts={contacts.map((item) => ({ id: item.id, label: item.fullName }))}
-      properties={properties.map((item) => ({ id: item.id, label: item.internalTitle }))}
-      searchRequests={searchRequests.map((item) => ({ id: item.id, label: item.title }))}
+      contacts={contacts.map((item: (typeof contacts)[number]) => ({ id: item.id, label: item.fullName }))}
+      properties={properties.map((item: (typeof properties)[number]) => ({ id: item.id, label: item.internalTitle }))}
+      searchRequests={searchRequests.map((item: (typeof searchRequests)[number]) => ({ id: item.id, label: item.title }))}
       initialValues={{
         title: deal.title,
         type: deal.type,

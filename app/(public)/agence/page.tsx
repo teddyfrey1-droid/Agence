@@ -48,7 +48,7 @@ export default function AgencePage() {
               "Opportunités off-market",
               "Reprises d’actifs",
               "Mandats confidentiels",
-            ].map((item) => (
+            ].map((item: string) => (
               <div key={item} className="rounded-2xl border border-line bg-[#fbf8f4] px-4 py-4">
                 {item}
               </div>

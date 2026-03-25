@@ -18,7 +18,7 @@ export default async function DealsPage() {
   });
 
   const grouped = Object.fromEntries(
-    DEAL_STAGES.map((stage) => [stage, deals.filter((deal) => deal.stage === stage)])
+    DEAL_STAGES.map((stage: (typeof DEAL_STAGES)[number]) => [stage, deals.filter((deal: (typeof deals)[number]) => deal.stage === stage)])
   ) as Record<string, typeof deals>;
 
   return (
@@ -35,7 +35,7 @@ export default async function DealsPage() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-4 2xl:grid-cols-6">
-        {DEAL_STAGES.map((stage) => (
+        {DEAL_STAGES.map((stage: (typeof DEAL_STAGES)[number]) => (
           <section key={stage} className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-sm font-semibold">{stage}</h2>
@@ -51,7 +51,7 @@ export default async function DealsPage() {
                 </div>
               )}
 
-              {grouped[stage].map((deal) => (
+              {grouped[stage].map((deal: (typeof deals)[number]) => (
                 <Link
                   key={deal.id}
                   href={`/app/dossiers/${deal.id}`}

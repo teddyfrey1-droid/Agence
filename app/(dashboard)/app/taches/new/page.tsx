@@ -54,12 +54,12 @@ export default async function NewTaskPage({
 
   return (
     <TaskNewClientPage
-      users={users.map((item) => ({ id: item.id, label: item.fullName }))}
-      contacts={contacts.map((item) => ({ id: item.id, label: item.fullName }))}
-      properties={properties.map((item) => ({ id: item.id, label: item.internalTitle }))}
-      searchRequests={searchRequests.map((item) => ({ id: item.id, label: item.title }))}
-      deals={deals.map((item) => ({ id: item.id, label: item.title }))}
-      fieldSpottings={fieldSpottings.map((item) => ({ id: item.id, label: item.addressText || "Repérage sans adresse" }))}
+      users={users.map((item: (typeof users)[number]) => ({ id: item.id, label: item.fullName }))}
+      contacts={contacts.map((item: (typeof contacts)[number]) => ({ id: item.id, label: item.fullName }))}
+      properties={properties.map((item: (typeof properties)[number]) => ({ id: item.id, label: item.internalTitle }))}
+      searchRequests={searchRequests.map((item: (typeof searchRequests)[number]) => ({ id: item.id, label: item.title }))}
+      deals={deals.map((item: (typeof deals)[number]) => ({ id: item.id, label: item.title }))}
+      fieldSpottings={fieldSpottings.map((item: (typeof fieldSpottings)[number]) => ({ id: item.id, label: item.addressText || "Repérage sans adresse" }))}
       initialValues={{
         contactId: getSingle(params.contactId) ?? "",
         propertyId: getSingle(params.propertyId) ?? "",
