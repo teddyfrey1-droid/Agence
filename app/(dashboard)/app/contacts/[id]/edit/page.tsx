@@ -24,7 +24,7 @@ export default async function ContactEditPage({ params }: { params: Promise<{ id
   return (
     <ContactEditClientPage
       contactId={contact.id}
-      users={users.map((item) => ({ id: item.id, label: item.fullName }))}
+      users={users.map((item: (typeof users)[number]) => ({ id: item.id, label: item.fullName }))}
       initialValues={{
         fullName: contact.fullName,
         firstName: contact.firstName ?? "",
