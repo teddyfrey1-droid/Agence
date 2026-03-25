@@ -1,0 +1,554 @@
+generator client { provider = "prisma-client-js" }
+
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+enum UserStatus { ACTIVE INVITED SUSPENDED DISABLED }
+enum RoleCode { SUPER_ADMIN DIRIGEANT ASSOCIE MANAGER AGENT ASSISTANT }
+enum ContactType { PROSPECT PROPRIETAIRE BAILLEUR APPORTEUR PARTENAIRE INVESTISSEUR ENSEIGNE LOCATAIRE ACQUEREUR OTHER }
+enum RelationshipStage { NEW ACTIVE WARM COLD ARCHIVED }
+enum OrganizationType { ENSEIGNE SOCIETE FONCIERE BAILLEUR INVESTISSEUR APPORTEUR PARTENAIRE OTHER }
+enum PropertyStatus { DRAFT QUALIFIED READY_TO_PUBLISH PUBLISHED CONFIDENTIAL ARCHIVED CLOSED }
+enum ConfidentialityLevel { PUBLIC INTERNAL RESTRICTED CONFIDENTIAL OFF_MARKET_PRIVATE }
+enum PropertySourceType { FIELD_SPOTTING OWNER_INBOUND AGENT_SOURCE PARTNER REFERRAL WEBSITE MANUAL OTHER }
+enum AssetType { LOCAL_COMMERCIAL MURS FONDS_DE_COMMERCE DROIT_AU_BAIL LOCATION_PURE OFF_MARKET OTHER }
+enum OccupancyStatus { VACANT OCCUPIED UNKNOWN }
+enum ListingStatus { DRAFT READY PUBLISHED UNPUBLISHED ARCHIVED }
+enum PublicationChannel { WEBSITE PRIVATE_SHARE INTERNAL_ONLY }
+enum SpottingStatus { SPOTTED TO_REVIEW OWNER_SEARCH OWNER_IDENTIFIED CONTACTED FOLLOW_UP CONVERTED DROPPED }
+enum SearchRequestStatus { NEW TO_QUALIFY ACTIVE WAITING MATCHED IN_PROGRESS WON LOST INACTIVE }
+enum RequestType { LOCATION ACQUISITION DROIT_AU_BAIL FONDS_DE_COMMERCE MURS OFF_MARKET OTHER }
+enum PriorityLevel { LOW MEDIUM HIGH URGENT }
+enum MaturityLevel { LOW MEDIUM HIGH }
+enum DealType { LOCATION ACQUISITION MANDAT ESTIMATION REPRISE OTHER }
+enum DealStage { NOUVEAU QUALIFICATION RECHERCHE_ACTIVE BIENS_PROPOSES VISITE_PLANIFIEE VISITE_REALISEE NEGOCIATION OFFRE SIGNATURE SIGNE PERDU EN_ATTENTE }
+enum DealStatus { OPEN WON LOST ON_HOLD ARCHIVED }
+enum TaskType { RELANCE APPEL RECHERCHE_PROPRIETAIRE MISE_A_JOUR_FICHE PUBLICATION PREPARATION_VISITE ENVOI_SELECTION FOLLOW_UP ADMIN OTHER }
+enum TaskStatus { TODO IN_PROGRESS WAITING DONE CANCELLED }
+enum InteractionType { CALL EMAIL WHATSAPP SMS MEETING INTERNAL_NOTE VISIT_FEEDBACK FOLLOW_UP OTHER }
+enum VisitStatus { PLANIFIEE CONFIRMEE REALISEE ANNULEE REPORTEE }
+enum MatchStatus { SUGGESTED REVIEWED SENT_TO_CLIENT IGNORED CONVERTED }
+enum DocumentType { MANDAT BAIL PLAN PHOTO PIECE_IDENTITE COMPTE_RENDU OFFRE DOCUMENT_INTERNE OTHER }
+enum MediaType { IMAGE VIDEO PDF PLAN OTHER }
+enum AuditActionType { CREATED UPDATED DELETED ASSIGNED STATUS_CHANGED STAGE_CHANGED PUBLISHED UNPUBLISHED CONVERTED LOGIN LOGOUT OTHER }
+
+model Agency {
+  id String @id @default(cuid())
+  name String
+  legalName String?
+  brandName String?
+  slug String @unique
+  timezone String @default("Europe/Paris")
+  currency String @default("EUR")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teams Team[]
+  roles Role[]
+  users User[]
+  contacts Contact[]
+  organizations Organization[]
+  searchRequests SearchRequest[]
+  properties Property[]
+  propertyMedia PropertyMedia[]
+  listings Listing[]
+  fieldSpottings FieldSpotting[]
+  deals Deal[]
+  tasks Task[]
+  interactions Interaction[]
+  visits Visit[]
+  matches Match[]
+  documents Document[]
+  auditLogs AuditLog[]
+  statusHistories StatusHistory[]
+}
+
+model Team {
+  id String @id @default(cuid())
+  agencyId String
+  name String
+  managerUserId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  managerUser User? @relation("ManagedTeam", fields: [managerUserId], references: [id], onDelete: SetNull)
+  users User[]
+  @@index([agencyId])
+}
+
+model Role {
+  id String @id @default(cuid())
+  agencyId String
+  code RoleCode
+  label String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  users User[]
+  @@unique([agencyId, code])
+}
+
+model User {
+  id String @id @default(cuid())
+  agencyId String
+  teamId String?
+  roleId String
+  firstName String
+  lastName String
+  fullName String
+  email String
+  phone String?
+  jobTitle String?
+  avatarUrl String?
+  status UserStatus @default(ACTIVE)
+  defaultSector String?
+  preferredArrondissements String[]
+  passwordHash String?
+  lastLoginAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  team Team? @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  managedTeam Team[] @relation("ManagedTeam")
+  ownedContacts Contact[] @relation("ContactOwner")
+  ownedSearchRequests SearchRequest[] @relation("SearchRequestOwner")
+  createdProperties Property[] @relation("PropertyCreator")
+  ownedProperties Property[] @relation("PropertyOwner")
+  assignedProperties Property[] @relation("PropertyAssignee")
+  uploadedPropertyMedia PropertyMedia[]
+  createdListings Listing[]
+  createdFieldSpottings FieldSpotting[] @relation("FieldSpottingCreator")
+  assignedFieldSpottings FieldSpotting[] @relation("FieldSpottingAssignee")
+  assignedDeals Deal[] @relation("DealAssignee")
+  createdDeals Deal[] @relation("DealCreator")
+  createdTasks Task[] @relation("TaskCreator")
+  assignedTasks Task[] @relation("TaskAssignee")
+  authoredInteractions Interaction[]
+  createdVisits Visit[] @relation("VisitCreator")
+  assignedVisits Visit[] @relation("VisitAssignee")
+  uploadedDocuments Document[]
+  auditLogs AuditLog[]
+  statusHistories StatusHistory[]
+  @@unique([agencyId, email])
+}
+
+model Contact {
+  id String @id @default(cuid())
+  agencyId String
+  ownerUserId String?
+  firstName String?
+  lastName String?
+  fullName String
+  email String?
+  phone String?
+  whatsappPhone String?
+  preferredContactMethod String?
+  source String?
+  contactTypePrimary ContactType @default(PROSPECT)
+  activitySector String?
+  priorityLevel PriorityLevel @default(MEDIUM)
+  relationshipStage RelationshipStage @default(NEW)
+  notesSummary String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  ownerUser User? @relation("ContactOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  organizationLinks OrganizationContact[]
+  searchRequests SearchRequest[]
+  ownerProperties Property[] @relation("PropertyOwnerContact")
+  deals Deal[]
+  tasks Task[]
+  interactions Interaction[]
+  visits Visit[]
+  documents Document[]
+}
+
+model Organization {
+  id String @id @default(cuid())
+  agencyId String
+  legalName String
+  displayName String?
+  organizationType OrganizationType @default(SOCIETE)
+  industry String?
+  website String?
+  phone String?
+  email String?
+  address String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  contacts OrganizationContact[]
+  searchRequests SearchRequest[]
+  ownerProperties Property[] @relation("PropertyOwnerOrganization")
+  deals Deal[]
+  fieldSpottings FieldSpotting[] @relation("SpottingOwnerOrganization")
+  documents Document[]
+}
+
+model OrganizationContact {
+  id String @id @default(cuid())
+  agencyId String
+  organizationId String
+  contactId String
+  roleLabel String?
+  isPrimary Boolean @default(false)
+  createdAt DateTime @default(now())
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  @@unique([organizationId, contactId])
+}
+
+model SearchRequest {
+  id String @id @default(cuid())
+  agencyId String
+  contactId String
+  organizationId String?
+  assignedUserId String?
+  title String
+  requestType RequestType @default(LOCATION)
+  status SearchRequestStatus @default(NEW)
+  priority PriorityLevel @default(MEDIUM)
+  urgencyLevel PriorityLevel @default(MEDIUM)
+  source String?
+  targetArrondissements String[]
+  targetNeighborhoods String[]
+  preferredStreets String[]
+  budgetMin Decimal? @db.Decimal(12, 2)
+  budgetMax Decimal? @db.Decimal(12, 2)
+  rentMin Decimal? @db.Decimal(12, 2)
+  rentMax Decimal? @db.Decimal(12, 2)
+  areaMin Decimal? @db.Decimal(10, 2)
+  areaMax Decimal? @db.Decimal(10, 2)
+  extractionRequired Boolean?
+  gasRequired Boolean?
+  terraceRequired Boolean?
+  cornerPreferred Boolean?
+  linearFrontageMin Decimal? @db.Decimal(10, 2)
+  propertyTypesAllowed AssetType[]
+  allowedActivities String[]
+  excludedActivities String[]
+  erpNeeded Boolean?
+  accessibilityRequired Boolean?
+  confidentialityLevel ConfidentialityLevel @default(INTERNAL)
+  projectDeadline DateTime?
+  maturityLevel MaturityLevel @default(MEDIUM)
+  financingStatus String?
+  qualificationScore Int?
+  nextFollowUpAt DateTime?
+  lostReason String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  assignedUser User? @relation("SearchRequestOwner", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  deals Deal[]
+  tasks Task[]
+  interactions Interaction[]
+  visits Visit[]
+  matches Match[]
+  documents Document[]
+}
+
+model Property {
+  id String @id @default(cuid())
+  agencyId String
+  createdByUserId String
+  ownerUserId String?
+  assignedUserId String?
+  propertyReference String?
+  internalTitle String
+  status PropertyStatus @default(DRAFT)
+  confidentialityLevel ConfidentialityLevel @default(INTERNAL)
+  sourceType PropertySourceType @default(MANUAL)
+  sourceDetails String?
+  assetType AssetType @default(LOCAL_COMMERCIAL)
+  occupancyStatus OccupancyStatus @default(UNKNOWN)
+  addressLine1 String?
+  addressLine2 String?
+  postalCode String?
+  city String? @default("Paris")
+  arrondissement String?
+  neighborhood String?
+  latitude Float?
+  longitude Float?
+  locationGeo Unsupported("geography(Point,4326)")?
+  salePrice Decimal? @db.Decimal(12, 2)
+  monthlyRent Decimal? @db.Decimal(12, 2)
+  annualRent Decimal? @db.Decimal(12, 2)
+  totalArea Decimal? @db.Decimal(10, 2)
+  extractionAvailable Boolean?
+  extractionPossible Boolean?
+  gasAvailable Boolean?
+  threePhaseAvailable Boolean?
+  authorizedActivities String[]
+  restrictedActivities String[]
+  internalComment String?
+  mainOwnerContactId String?
+  mainOwnerOrganizationId String?
+  relatedFieldSpottingId String?
+  isPublishable Boolean @default(false)
+  completenessScore Int? @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdByUser User @relation("PropertyCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  ownerUser User? @relation("PropertyOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  assignedUser User? @relation("PropertyAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  mainOwnerContact Contact? @relation("PropertyOwnerContact", fields: [mainOwnerContactId], references: [id], onDelete: SetNull)
+  mainOwnerOrganization Organization? @relation("PropertyOwnerOrganization", fields: [mainOwnerOrganizationId], references: [id], onDelete: SetNull)
+  relatedFieldSpotting FieldSpotting? @relation("SpottingConvertedProperty", fields: [relatedFieldSpottingId], references: [id], onDelete: SetNull)
+  media PropertyMedia[]
+  listings Listing[]
+  deals Deal[]
+  tasks Task[]
+  interactions Interaction[]
+  visits Visit[]
+  matches Match[]
+  documents Document[]
+}
+
+model PropertyMedia {
+  id String @id @default(cuid())
+  agencyId String
+  propertyId String
+  fileUrl String
+  mediaType MediaType @default(IMAGE)
+  title String?
+  sortOrder Int @default(0)
+  isCover Boolean @default(false)
+  isPublic Boolean @default(false)
+  uploadedByUserId String
+  createdAt DateTime @default(now())
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  uploadedByUser User @relation(fields: [uploadedByUserId], references: [id], onDelete: Restrict)
+}
+
+model Listing {
+  id String @id @default(cuid())
+  agencyId String
+  propertyId String
+  createdByUserId String
+  listingTitle String
+  publicDescription String?
+  seoSlug String @unique
+  status ListingStatus @default(DRAFT)
+  publicationChannel PublicationChannel @default(WEBSITE)
+  visibilityScope ConfidentialityLevel @default(PUBLIC)
+  publishedAt DateTime?
+  unpublishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdByUser User @relation(fields: [createdByUserId], references: [id], onDelete: Restrict)
+  @@unique([agencyId, propertyId])
+}
+
+model FieldSpotting {
+  id String @id @default(cuid())
+  agencyId String
+  createdByUserId String
+  assignedUserId String?
+  spottingStatus SpottingStatus @default(SPOTTED)
+  spottedAt DateTime @default(now())
+  photoCoverUrl String?
+  addressText String?
+  postalCode String?
+  arrondissement String?
+  neighborhood String?
+  latitude Float?
+  longitude Float?
+  locationGeo Unsupported("geography(Point,4326)")?
+  quickNote String?
+  ownerIdentified Boolean @default(false)
+  ownerContacted Boolean @default(false)
+  ownerContactId String?
+  ownerOrganizationId String?
+  estimatedArea Decimal? @db.Decimal(10, 2)
+  estimatedLinearFrontage Decimal? @db.Decimal(10, 2)
+  convertedToPropertyId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdByUser User @relation("FieldSpottingCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  assignedUser User? @relation("FieldSpottingAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  ownerContact Contact? @relation(fields: [ownerContactId], references: [id], onDelete: SetNull)
+  ownerOrganization Organization? @relation("SpottingOwnerOrganization", fields: [ownerOrganizationId], references: [id], onDelete: SetNull)
+  convertedToProperty Property? @relation("SpottingConvertedProperty")
+  tasks Task[]
+  documents Document[]
+}
+
+model Deal {
+  id String @id @default(cuid())
+  agencyId String
+  type DealType @default(LOCATION)
+  title String
+  status DealStatus @default(OPEN)
+  stage DealStage @default(NOUVEAU)
+  assignedUserId String?
+  createdByUserId String
+  contactId String?
+  organizationId String?
+  propertyId String?
+  searchRequestId String?
+  priorityLevel PriorityLevel @default(MEDIUM)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  assignedUser User? @relation("DealAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  createdByUser User @relation("DealCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  searchRequest SearchRequest? @relation(fields: [searchRequestId], references: [id], onDelete: SetNull)
+  tasks Task[]
+  interactions Interaction[]
+  visits Visit[]
+  documents Document[]
+}
+
+model Task {
+  id String @id @default(cuid())
+  agencyId String
+  assignedUserId String?
+  createdByUserId String
+  taskType TaskType @default(FOLLOW_UP)
+  title String
+  description String?
+  status TaskStatus @default(TODO)
+  priority PriorityLevel @default(MEDIUM)
+  dueAt DateTime?
+  completedAt DateTime?
+  contactId String?
+  propertyId String?
+  searchRequestId String?
+  dealId String?
+  fieldSpottingId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  assignedUser User? @relation("TaskAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  createdByUser User @relation("TaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  searchRequest SearchRequest? @relation(fields: [searchRequestId], references: [id], onDelete: SetNull)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  fieldSpotting FieldSpotting? @relation(fields: [fieldSpottingId], references: [id], onDelete: SetNull)
+}
+
+model Interaction {
+  id String @id @default(cuid())
+  agencyId String
+  authorUserId String
+  interactionType InteractionType @default(INTERNAL_NOTE)
+  happenedAt DateTime @default(now())
+  summary String
+  details String?
+  contactId String?
+  propertyId String?
+  searchRequestId String?
+  dealId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  authorUser User @relation(fields: [authorUserId], references: [id], onDelete: Restrict)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  searchRequest SearchRequest? @relation(fields: [searchRequestId], references: [id], onDelete: SetNull)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: SetNull)
+}
+
+model Visit {
+  id String @id @default(cuid())
+  agencyId String
+  propertyId String
+  dealId String?
+  searchRequestId String?
+  contactId String?
+  scheduledAt DateTime
+  status VisitStatus @default(PLANIFIEE)
+  createdByUserId String
+  assignedUserId String?
+  feedbackSummary String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  searchRequest SearchRequest? @relation(fields: [searchRequestId], references: [id], onDelete: SetNull)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  createdByUser User @relation("VisitCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  assignedUser User? @relation("VisitAssignee", fields: [assignedUserId], references: [id], onDelete: SetNull)
+}
+
+model Match {
+  id String @id @default(cuid())
+  agencyId String
+  propertyId String
+  searchRequestId String
+  score Int
+  status MatchStatus @default(SUGGESTED)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  searchRequest SearchRequest @relation(fields: [searchRequestId], references: [id], onDelete: Cascade)
+  @@unique([propertyId, searchRequestId])
+}
+
+model Document {
+  id String @id @default(cuid())
+  agencyId String
+  documentType DocumentType @default(DOCUMENT_INTERNE)
+  fileUrl String
+  fileName String
+  mimeType String?
+  visibility ConfidentialityLevel @default(INTERNAL)
+  uploadedByUserId String
+  contactId String?
+  organizationId String?
+  propertyId String?
+  searchRequestId String?
+  dealId String?
+  fieldSpottingId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  uploadedByUser User @relation(fields: [uploadedByUserId], references: [id], onDelete: Restrict)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  searchRequest SearchRequest? @relation(fields: [searchRequestId], references: [id], onDelete: SetNull)
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  fieldSpotting FieldSpotting? @relation(fields: [fieldSpottingId], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  agencyId String
+  userId String?
+  actionType AuditActionType
+  entityType String
+  entityId String
+  happenedAt DateTime @default(now())
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model StatusHistory {
+  id String @id @default(cuid())
+  agencyId String
+  entityType String
+  entityId String
+  oldStatus String?
+  newStatus String
+  changedByUserId String?
+  changedAt DateTime @default(now())
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  changedByUser User? @relation(fields: [changedByUserId], references: [id], onDelete: SetNull)
+}
