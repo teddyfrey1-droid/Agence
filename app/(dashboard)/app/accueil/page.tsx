@@ -98,7 +98,7 @@ export default async function DashboardHomePage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {stats.map((item) => (
+        {stats.map((item: (typeof stats)[number]) => (
           <StatCard key={item.label} label={item.label} value={item.value} hint={item.hint} />
         ))}
       </div>
@@ -117,7 +117,7 @@ export default async function DashboardHomePage() {
             {urgentTasks.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucune priorité ouverte pour le moment.</p>
             ) : (
-              urgentTasks.map((task) => (
+              urgentTasks.map((task: (typeof urgentTasks)[number]) => (
                 <div key={task.id} className="rounded-2xl border border-black/10 bg-neutral-50/80 px-4 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -153,7 +153,7 @@ export default async function DashboardHomePage() {
             {strongMatches.length === 0 ? (
               <p className="text-sm text-[#6b665f]">Aucun match fort disponible pour le moment.</p>
             ) : (
-              strongMatches.map((match) => (
+              strongMatches.map((match: (typeof strongMatches)[number]) => (
                 <div key={match.id} className="rounded-2xl border border-black/10 bg-neutral-50/80 px-4 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -201,7 +201,7 @@ export default async function DashboardHomePage() {
                   </td>
                 </tr>
               ) : (
-                recentProperties.map((property) => (
+                recentProperties.map((property: (typeof recentProperties)[number]) => (
                   <tr key={property.id}>
                     <td className="px-4 py-3 font-medium">{property.internalTitle}</td>
                     <td className="px-4 py-3">{property.arrondissement ?? "—"}</td>
