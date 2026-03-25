@@ -47,8 +47,8 @@ export default async function CartePage() {
 
   const mapMarkers = [
     ...latestProperties
-      .filter((item) => item.latitude !== null && item.longitude !== null)
-      .map((item) => ({
+       .filter((item: (typeof latestProperties)[number]) => item.latitude !== null && item.longitude !== null)
+       .map((item: (typeof latestProperties)[number]) => ({
         id: item.id,
         title: item.internalTitle,
         subtitle: [item.arrondissement, item.neighborhood].filter(Boolean).join(" · ") || item.status,
@@ -58,8 +58,8 @@ export default async function CartePage() {
         longitude: item.longitude as number,
       })),
     ...latestSpottings
-      .filter((item) => item.latitude !== null && item.longitude !== null)
-      .map((item) => ({
+       .filter((item: (typeof latestSpottings)[number]) => item.latitude !== null && item.longitude !== null)
+       .map((item: (typeof latestSpottings)[number]) => ({
         id: item.id,
         title: item.addressText ?? "Repérage terrain",
         subtitle: [item.arrondissement, item.spottingStatus].filter(Boolean).join(" · "),
