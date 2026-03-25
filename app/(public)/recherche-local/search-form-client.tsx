@@ -22,7 +22,7 @@ export default function PublicSearchForm() {
   const [error, setError] = useState<string | null>(null);
 
   const summary = useMemo(() => {
-    const parts = [];
+    const parts: string[] = [];
     if (targetArrondissements.length) parts.push(targetArrondissements.join(", "));
     if (budgetMax) parts.push(`Budget max ${budgetMax} €`);
     if (areaMin) parts.push(`À partir de ${areaMin} m²`);
