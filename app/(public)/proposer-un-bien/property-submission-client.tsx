@@ -20,7 +20,7 @@ export default function PropertySubmissionForm() {
   const [error, setError] = useState<string | null>(null);
 
   const summary = useMemo(() => {
-    const parts = [];
+   const parts: string[] = [];
     if (addressText) parts.push(addressText);
     if (surface) parts.push(`${surface} m²`);
     if (rentOrPrice) parts.push(rentOrPrice);
