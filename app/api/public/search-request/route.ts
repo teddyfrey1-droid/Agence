@@ -97,10 +97,7 @@ export async function POST(request: NextRequest) {
     description:
       "Demande entrante reçue depuis le site. Appeler ou répondre rapidement pour qualification.",
   });
-  await matchService.recomputeForSearchRequest({
-    agencyId: agency.id,
-    searchRequestId: searchRequest.id,
-  });
+ await matchService.recomputeForSearchRequest(agency.id, searchRequest.id);
   return NextResponse.json({
     success: true,
     data: {
