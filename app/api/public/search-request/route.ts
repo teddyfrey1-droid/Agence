@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { PriorityLevel, RequestType, SearchRequestStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
 import {
   createInboundInteraction,
   createInboundTask,
@@ -15,25 +13,20 @@ import { publicSearchLeadSchema } from "@/modules/public-leads/public-lead.schem
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const parsed = publicSearchLeadSchema.safeParse(body);
-
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Informations invalides", details: parsed.error.flatten() },
       { status: 400 },
     );
   }
-
   const input = parsed.data;
-
   if (input.company) {
     return NextResponse.json({ success: true, spamProtected: true });
   }
-
   const agency = await getPrimaryAgency();
   if (!agency) {
     return NextResponse.json({ error: "Agence introuvable" }, { status: 404 });
   }
-
   const fallbackUser = await getFallbackInboundUser(agency.id);
   if (!fallbackUser) {
     return NextResponse.json(
@@ -41,7 +34,6 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-
   const { contact, created } = await upsertInboundContact({
     agencyId: agency.id,
     fullName: input.fullName,
@@ -53,17 +45,16 @@ export async function POST(request: NextRequest) {
       ? `Demande web — activité : ${input.activity}`
       : "Demande web reçue depuis le site.",
   });
-
   const searchRequest = await prisma.searchRequest.create({
     data: {
       agencyId: agency.id,
       contactId: contact.id,
       assignedUserId: fallbackUser.id,
       title: `Recherche ${input.activity || "local commercial"} - ${input.fullName}`,
-      requestType: RequestType.LOCATION,
-      status: SearchRequestStatus.NEW,
-      priority: PriorityLevel.MEDIUM,
-      urgencyLevel: PriorityLevel.MEDIUM,
+      requestType: "LOCATION",
+      status: "NEW",
+      priority: "MEDIUM",
+      urgencyLevel: "MEDIUM",
       source: "website",
       targetArrondissements: input.targetArrondissements,
       budgetMax: input.budgetMax || undefined,
@@ -73,7 +64,6 @@ export async function POST(request: NextRequest) {
       qualificationScore: 30,
     },
   });
-
   await createInboundInteraction({
     agencyId: agency.id,
     authorUserId: fallbackUser.id,
@@ -97,7 +87,6 @@ export async function POST(request: NextRequest) {
       .filter(Boolean)
       .join("\n"),
   });
-
   await createInboundTask({
     agencyId: agency.id,
     assignedUserId: fallbackUser.id,
@@ -108,12 +97,10 @@ export async function POST(request: NextRequest) {
     description:
       "Demande entrante reçue depuis le site. Appeler ou répondre rapidement pour qualification.",
   });
-
   await matchService.recomputeForSearchRequest({
     agencyId: agency.id,
     searchRequestId: searchRequest.id,
   });
-
   return NextResponse.json({
     success: true,
     data: {
