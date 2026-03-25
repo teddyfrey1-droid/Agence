@@ -32,7 +32,7 @@ export default function PublicSearchForm() {
 
   function toggleArr(value: string) {
     setTargetArrondissements((prev) =>
-      prev.includes(value) ? prev.filter((item: (typeof prev)[number]) => item !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   }
 
@@ -128,7 +128,7 @@ export default function PublicSearchForm() {
         <div className="space-y-3">
           <div className="text-sm font-medium">Zones ciblées</div>
           <div className="flex flex-wrap gap-2">
-            {arrs.map((value: (typeof arrs)[number]) => {
+            {arrs.map((value) => {
               const active = targetArrondissements.includes(value);
               return (
                 <button

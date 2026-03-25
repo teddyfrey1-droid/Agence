@@ -20,10 +20,10 @@ export default async function InteractionEditPage({ params }: { params: Promise<
   return (
     <InteractionEditClientPage
       interactionId={interaction.id}
-      contacts={contacts.map((item: (typeof contacts)[number]) => ({ id: item.id, label: item.fullName }))}
-      properties={properties.map((item: (typeof properties)[number]) => ({ id: item.id, label: item.internalTitle }))}
-      searchRequests={searchRequests.map((item: (typeof searchRequests)[number]) => ({ id: item.id, label: item.title }))}
-      deals={deals.map((item: (typeof deals)[number]) => ({ id: item.id, label: item.title }))}
+      contacts={contacts.map((item) => ({ id: item.id, label: item.fullName }))}
+      properties={properties.map((item) => ({ id: item.id, label: item.internalTitle }))}
+      searchRequests={searchRequests.map((item) => ({ id: item.id, label: item.title }))}
+      deals={deals.map((item) => ({ id: item.id, label: item.title }))}
       initialValues={{
         summary: interaction.summary,
         details: interaction.details ?? "",

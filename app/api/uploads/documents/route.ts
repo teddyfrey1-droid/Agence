@@ -1,9 +1,17 @@
-import { ConfidentialityLevel, DocumentType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { CONFIDENTIALITY_LEVELS, DOCUMENT_TYPES, type ConfidentialityLevelValue, type DocumentTypeValue } from "@/lib/client-options";
 import { documentService } from "@/modules/documents/document.service";
 
 export const runtime = "nodejs";
+
+function isDocumentType(value: string): value is DocumentTypeValue {
+  return (DOCUMENT_TYPES as readonly string[]).includes(value);
+}
+
+function isConfidentialityLevel(value: string): value is ConfidentialityLevelValue {
+  return (CONFIDENTIALITY_LEVELS as readonly string[]).includes(value);
+}
 
 export async function POST(request: NextRequest) {
   const user = await getCurrentUser();
@@ -13,8 +21,10 @@ export async function POST(request: NextRequest) {
 
   const formData = await request.formData();
   const file = formData.get("file");
-  const documentType = String(formData.get("documentType") ?? DocumentType.DOCUMENT_INTERNE) as DocumentType;
-  const visibility = String(formData.get("visibility") ?? ConfidentialityLevel.INTERNAL) as ConfidentialityLevel;
+  const rawDocumentType = String(formData.get("documentType") ?? "DOCUMENT_INTERNE");
+  const rawVisibility = String(formData.get("visibility") ?? "INTERNAL");
+  const documentType: DocumentTypeValue = isDocumentType(rawDocumentType) ? rawDocumentType : "DOCUMENT_INTERNE";
+  const visibility: ConfidentialityLevelValue = isConfidentialityLevel(rawVisibility) ? rawVisibility : "INTERNAL";
 
   const propertyId = String(formData.get("propertyId") ?? "").trim() || undefined;
   const dealId = String(formData.get("dealId") ?? "").trim() || undefined;

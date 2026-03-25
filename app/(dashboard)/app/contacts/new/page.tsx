@@ -14,7 +14,7 @@ export default async function NewContactPage() {
 
   return (
     <ContactNewClientPage
-      users={users.map((item: (typeof users)[number]) => ({ id: item.id, label: item.fullName }))}
+      users={users.map((item) => ({ id: item.id, label: item.fullName }))}
     />
   );
 }
