@@ -24,3 +24,8 @@ Avant déploiement Vercel :
 1. pousser tout le contenu du projet, pas seulement quelques dossiers
 2. configurer les variables d’environnement
 3. lancer un déploiement sans cache
+
+
+## Patch Vercel suivant
+- `tailwind.config.ts` aligné sur une structure à la racine (`app/`, `components/`, `modules/`, `lib/`).
+- `app/(dashboard)/app/accueil/page.tsx` typé explicitement sur les callbacks `map(...)` pour éviter les erreurs TypeScript `implicitly has an any type`.
