@@ -31,8 +31,8 @@ export function DocumentUpload({
   title = "Ajouter un document",
 }: Props) {
   const router = useRouter();
-  const [documentType, setDocumentType] = useState<DocumentType>(DocumentType.DOCUMENT_INTERNE);
-  const [visibility, setVisibility] = useState<ConfidentialityLevel>(ConfidentialityLevel.INTERNAL);
+  const [documentType, setDocumentType] = useState<DocumentTypeValue>("DOCUMENT_INTERNE");
+  const [visibility, setVisibility] = useState<ConfidentialityLevelValue>("INTERNAL");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);

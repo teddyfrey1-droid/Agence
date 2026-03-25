@@ -1,6 +1,6 @@
-import { ConfidentialityLevel, DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { assertAllowedDocument, saveUploadedFile } from "@/lib/uploads";
+import type { ConfidentialityLevelValue, DocumentTypeValue } from "@/lib/client-options";
 import { documentRepository } from "./document.repository";
 
 async function ensureEntityBelongsToAgency(params: {
@@ -44,8 +44,8 @@ export const documentService = {
     agencyId: string;
     uploadedByUserId: string;
     file: File;
-    documentType?: DocumentType;
-    visibility?: ConfidentialityLevel;
+    documentType?: DocumentTypeValue;
+    visibility?: ConfidentialityLevelValue;
     propertyId?: string;
     dealId?: string;
     fieldSpottingId?: string;
@@ -56,8 +56,8 @@ export const documentService = {
       agencyId,
       uploadedByUserId,
       file,
-      documentType = DocumentType.DOCUMENT_INTERNE,
-      visibility = ConfidentialityLevel.INTERNAL,
+      documentType = "DOCUMENT_INTERNE",
+      visibility = "INTERNAL",
       propertyId,
       dealId,
       fieldSpottingId,
